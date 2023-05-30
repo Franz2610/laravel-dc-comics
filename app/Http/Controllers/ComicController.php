@@ -19,11 +19,10 @@ class ComicController extends Controller
             'dcComics' => config('db.dcComics'),
             'shop' => config('db.shop'),
             'dc' => config('db.dc'),
-            'sites' => config('db.sites'),
-            'comics' => config('db.comics')
+            'sites' => config('db.sites')
         ];
         $comics = Comic::all();
-        return view('comics.index', $data);
+        return view('comics.index', $data, compact('comics'));
     }
 
     /**
@@ -72,9 +71,8 @@ class ComicController extends Controller
             'shop' => config('db.shop'),
             'dc' => config('db.dc'),
             'sites' => config('db.sites'),
-            'comics' => config('db.comics')
         ];
-        return view('comics.show', $data);
+        return view('comics.show', $data , compact('comic'));
     }
 
     /**
@@ -82,9 +80,19 @@ class ComicController extends Controller
      *
      * @param  \App\Models\Comic  $comic
      */
-    public function edit(Comic $comic)
+    public function edit( Comic $comic)
+
     {
-        //
+        $data =
+        [
+            'headerLinks' => config('db.headerLinks'),
+            'dcComics' => config('db.dcComics'),
+            'shop' => config('db.shop'),
+            'dc' => config('db.dc'),
+            'sites' => config('db.sites'),
+        ];
+        return view('comics.edit', $data, compact('comic'));
+
     }
 
     /**
@@ -95,7 +103,9 @@ class ComicController extends Controller
      */
     public function update(Request $request, Comic $comic)
     {
-        //
+        $form_data = $request->all();
+        $comic->update($form_data);
+        return redirect()->route('comics.index', $comic->id)->with('message', " Hai modificato con successo il fumetto!");
     }
 
     /**
@@ -105,6 +115,7 @@ class ComicController extends Controller
      */
     public function destroy(Comic $comic)
     {
-        //
+        $comic->delete();
+        return redirect()->route('comics.index')->with('message', "Hai eliminato con successo il fumetto: {$comic->title}");
     }
 }
